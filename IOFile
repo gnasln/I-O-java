@@ -1,0 +1,52 @@
+import java.io.*;
+
+public class IOFile {
+    private String filename;
+
+    public IOFile(String filename) {
+        this.filename = filename;
+    }
+
+    public int countLines() throws IOException{
+        try (BufferedReader reader = new BufferedReader(new FileReader(filename))) {
+            return (int) reader.lines().count();
+        }
+    }
+
+    public void write(OutputStream os) throws IOException{
+        try(BufferedInputStream bis = new BufferedInputStream(new FileInputStream(filename))){
+            byte[] buffer = new byte[1024];
+            int count;
+            while((count = bis.read(buffer)) > 0){
+                os.write(buffer, 0, count);
+            }
+        }
+    }
+
+    public void print() throws IOException{
+        try(BufferedReader reader = new BufferedReader(new FileReader(filename))){
+            String line;
+            while((line = reader.readLine())!= null){
+                System.out.println(line);
+            }
+        }
+    }
+
+    public void copy(String newFilename) throws IOException{
+        try(InputStream is = new FileInputStream(filename);
+        OutputStream os = new FileOutputStream(newFilename)){
+            byte[] buffer = new byte[1024];
+            int length;
+            while((length = is.read(buffer)) > 0){
+                os.write(buffer, 0, length);
+            }
+        }
+    }
+
+    public void delete(){
+        File file = new File(filename);
+        if(!file.delete()){//boolean
+            System.out.println("Failed to delete the file.");
+        }
+    }
+}
